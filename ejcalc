@@ -1,30 +1,88 @@
 #! /usr/bin/python3
 
-# asks:
-#  - nic
-#  - pg
-#  - vg
-#  - flavors
-#  - should save
-#    - name
-
 def get_recipe():
-    nicotine_mg = float(input("Enter nicotine in MG: "))
-    pg_percent  = int(input("Enter PG as percent: "))
-    vg_percent  = 100 - pg_percent
-    flavors     = []
+    desired_amount        = float(input("Amount to make (ml): "))
+    desired_strength    = float(input("Desired strength (mg): "))
+    desired_pg          = float(input("Desired PG (%): "))
+    desired_vg          = 100 - desired_pg
+    nicotine_strength   = float(input("Nicotine strength (mg): "))
+    nicotine_pg_content = float(input("PG-content of nicotine (%): "))
+    nicotine_vg_content = float(input("VG-content of nicotine (%): "))
+    flavors             = []
 
     print("Type 'quit' to end entering flavors.")
     while True:
-        flavor_name = input("Enter flavor name: ")
+        flavor_name = input("Flavor name: ")
 
         if flavor_name == 'quit':
             break
 
-        flavor_percent = input("Enter flavor percent: ")
+        flavor_percent = float(input("Flavor amount (%): "))
         flavors.append({
             'name': flavor_name, 
             'amount': flavor_percent
         })
 
-get_recipe()
+    return {
+        'desired_amount': desired_amount,
+        'desired_strength': desired_strength,
+        'desired_pg': desired_pg,
+        'desired_vg': desired_vg,
+        'nicotine_strength': nicotine_strength,
+        'nicotine_pg_content': nicotine_pg_content,
+        'nicotine_vg_content': nicotine_vg_content,
+        'flavors': flavors
+    }
+
+def calculate_recipe(recipe):
+    flavors = []
+
+    base_nicotine = calculate_base_nicotine(
+        recipe['desired_strength'],
+        recipe['nicotine_strength'],
+        recipe['desired_amount']
+    )
+    for flavor in recipe['flavors']:
+        flavor_amount = calculate_flavor(
+                flavor['amount'], 
+                recipe['desired_amount'])
+        flavors.append({
+            'name': flavor['name'],
+            'amount': flavor_amount
+        })
+
+    vg = calculate_vg(
+        recipe['desired_amount'],
+        recipe['desired_vg'],
+        base_nicotine,
+        recipe['nicotine_vg_content'])
+    pg = calculate_pg(
+        recipe['desired_amount'],
+        recipe['desired_pg'],
+        base_nicotine,
+        recipe['nicotine_pg_content'],
+        sum(f['amount'] for f in flavors))
+
+    return {
+        'nicotine_base': base_nicotine,
+        'pg': pg,
+        'vg': vg,
+        'flavors': flavors
+    }
+
+def calculate_base_nicotine(desired_strength, base_content, desired_amount):
+    return round((desired_strength / base_content) * desired_amount, 3)
+
+def calculate_flavor(flavor_amount, desired_amount):
+    return round((flavor_amount / 100) * desired_amount, 3)
+
+def calculate_vg(desired_amount, desired_vg, base_nicotine, nicotine_vg_content):
+    return round(desired_amount * (desired_vg / 100) - (base_nicotine * (nicotine_vg_content / 100)), 3)
+
+def calculate_pg(desired_amount, desired_pg, base_nicotine, nicotine_pg_content, total_flavor_amount):
+    return round(desired_amount * (desired_pg / 100) - (base_nicotine * (nicotine_pg_content / 100)) - total_flavor_amount, 3)
+
+recipe = get_recipe()
+result = calculate_recipe(recipe)
+
+print(result)
