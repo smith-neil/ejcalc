@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 def get_recipe():
-    desired_amount        = float(input("Amount to make (ml): "))
+    desired_amount      = float(input("Amount to make (ml): "))
     desired_strength    = float(input("Desired strength (mg): "))
     desired_pg          = float(input("Desired PG (%): "))
     desired_vg          = 100 - desired_pg
@@ -19,19 +19,19 @@ def get_recipe():
 
         flavor_percent = float(input("Flavor amount (%): "))
         flavors.append({
-            'name': flavor_name, 
+            'name'  : flavor_name, 
             'amount': flavor_percent
         })
 
     return {
-        'desired_amount': desired_amount,
-        'desired_strength': desired_strength,
-        'desired_pg': desired_pg,
-        'desired_vg': desired_vg,
-        'nicotine_strength': nicotine_strength,
+        'desired_amount'     : desired_amount,
+        'desired_strength'   : desired_strength,
+        'desired_pg'         : desired_pg,
+        'desired_vg'         : desired_vg,
+        'nicotine_strength'  : nicotine_strength,
         'nicotine_pg_content': nicotine_pg_content,
         'nicotine_vg_content': nicotine_vg_content,
-        'flavors': flavors
+        'flavors'            : flavors
     }
 
 def calculate_recipe(recipe):
@@ -42,6 +42,7 @@ def calculate_recipe(recipe):
         recipe['nicotine_strength'],
         recipe['desired_amount']
     )
+
     for flavor in recipe['flavors']:
         flavor_amount = calculate_flavor(
                 flavor['amount'], 
@@ -56,6 +57,7 @@ def calculate_recipe(recipe):
         recipe['desired_vg'],
         base_nicotine,
         recipe['nicotine_vg_content'])
+
     pg = calculate_pg(
         recipe['desired_amount'],
         recipe['desired_pg'],
@@ -64,7 +66,7 @@ def calculate_recipe(recipe):
         sum(f['amount'] for f in flavors))
 
     return {
-        'nicotine_base': base_nicotine,
+        'base_nicotine': base_nicotine,
         'pg': pg,
         'vg': vg,
         'flavors': flavors
