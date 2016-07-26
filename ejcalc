@@ -1,0 +1,30 @@
+#! /usr/bin/python3
+
+# asks:
+#  - nic
+#  - pg
+#  - vg
+#  - flavors
+#  - should save
+#    - name
+
+def get_recipe():
+    nicotine_mg = float(input("Enter nicotine in MG: "))
+    pg_percent  = int(input("Enter PG as percent: "))
+    vg_percent  = 100 - pg_percent
+    flavors     = []
+
+    print("Type 'quit' to end entering flavors.")
+    while True:
+        flavor_name = input("Enter flavor name: ")
+
+        if flavor_name == 'quit':
+            break
+
+        flavor_percent = input("Enter flavor percent: ")
+        flavors.append({
+            'name': flavor_name, 
+            'amount': flavor_percent
+        })
+
+get_recipe()
