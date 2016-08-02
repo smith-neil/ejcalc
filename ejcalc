@@ -45,8 +45,8 @@ def calculate_recipe(recipe):
 
     for flavor in recipe['flavors']:
         flavor_amount = calculate_flavor(
-                flavor['amount'], 
-                recipe['desired_amount'])
+            flavor['amount'], 
+            recipe['desired_amount'])
         flavors.append({
             'name': flavor['name'],
             'amount': flavor_amount
